@@ -36,10 +36,10 @@ def use_tcp_socket_implementation(hostname, port):
         connection_socket, _ = server_socket.accept()
 
         while True:
-            data_packet = receive_data_packet(connection_socket)
+            data_packet = connection_socket.recv(1024).decode()
             if not data_packet:
                 break
-            send_data_back_to_client(connection_socket, data_packet)
+            connection_socket.send(data_packet.upper().encode())
 
 def use_udp_socket_implementation(hostname, port):
     instantiate_udp_socket = lambda: socket.socket(
@@ -53,21 +53,16 @@ def use_udp_socket_implementation(hostname, port):
         present_listening_on(port)
 
         while True:
-            data_packet = receive_data_packet(server_socket)
+            data_packet, address = server_socket.recvfrom(1024)
             if not data_packet:
                 break
-            send_data_back_to_client(server_socket, data_packet)
+            data_packet = data_packet.decode().upper()
+            server_socket.sendto(data_packet.encode(), address)
 
 
 # Utility functions -----------------------------------------------------------
 def present_listening_on(port):
     print(f'Ouvindo na porta {port}...')
-
-def receive_data_packet(socket):
-    return socket.recv(1024).decode()
-
-def send_data_back_to_client(socket, data_packet):
-    socket.send(data_packet.upper().encode())
 # -----------------------------------------------------------------------------
 
 
