@@ -5,27 +5,31 @@ def server():
     hostname = socket.gethostname()
     port = 8000
 
-    server_socket = socket.socket()
-    server_socket.bind(tuple([hostname, port]))
+    instantiate_tcp_socket = lambda: socket.socket(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+    )
 
-    # how many clients the server can listen simultaneously
-    server_socket.listen(1)
+    with instantiate_tcp_socket() as server_socket:
+        server_socket.bind(tuple([hostname, port]))
 
-    print(f'Ouvindo na porta {port}...')
-    connection_socket, address = server_socket.accept()
+        # how many clients the server can listen simultaneously
+        server_socket.listen(1)
 
-    print(f'Conexão de {address}')
+        print(f'Ouvindo na porta {port}...')
+        connection_socket, address = server_socket.accept()
 
-    while True:
-        data_packet = connection_socket.recv(1024).decode()
-        if not data_packet:
-            break
+        print(f'Conexão de {address}')
 
-        print(f'Recebido do usuário conectado: {data_packet}')
-        
-        # send data uppercase to the client
-        connection_socket.send(data_packet.upper().encode())
-    connection_socket.close()
+        while True:
+            data_packet = connection_socket.recv(1024).decode()
+            if not data_packet:
+                break
+
+            print(f'Recebido do usuário conectado: {data_packet}')
+            
+            # send data uppercase to the client
+            connection_socket.send(data_packet.upper().encode())
 
 
 if __name__ == '__main__':
