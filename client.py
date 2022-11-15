@@ -1,3 +1,9 @@
+"""
+Integrantes:
+    Matheus da Costa da Silva
+    Thiago Vinicios Sousa
+"""
+
 import socket
 
 
